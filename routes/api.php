@@ -16,6 +16,9 @@ Route::prefix('v1')->namespace('V1')->group(function () {
     Route::middleware('guest:api')->prefix('auth')->namespace('Auth')->group(function () {
         Route::post('register', 'RegisterController@register');
         Route::post('login', 'AuthController@login');
+
+        Route::post('oauth/{driver}', 'OAuthController@redirectToProvider');
+        Route::get('oauth/{driver}/callback', 'OAuthController@handleProviderCallback');
     });
 
     Route::middleware('auth:api')->group(function () {

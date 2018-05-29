@@ -1,7 +1,10 @@
 {
     "name": "Todolist Backend",
     "description": "Todolist Backend",
-    "keywords": ["todolist", "laravel"],
+    "keywords": [
+        "todolist",
+        "laravel"
+    ],
     "license": "MIT",
     "type": "project",
     "require": {
@@ -12,6 +15,7 @@
         "pusher/pusher-php-server": "^3.0",
         "spatie/laravel-backup": "^5.1",
         "spatie/laravel-cors": "^1.0",
+        "tcg/voyager": "^1.1",
         "tymon/jwt-auth": "^1.0.0-rc.2"
     },
     "require-dev": {
@@ -39,8 +43,7 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": [
-            ]
+            "dont-discover": []
         }
     },
     "scripts": {
@@ -61,5 +64,11 @@
         "optimize-autoloader": true
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": {
+        "hooks": {
+            "type": "composer",
+            "url": "https://larapack.io"
+        }
+    }
 }

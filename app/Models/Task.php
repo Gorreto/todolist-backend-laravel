@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use App\Scopes\AuthorScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 class Task extends Model
 {
@@ -32,15 +32,15 @@ class Task extends Model
     ];
 
     /**
-     * The "booting" method of the model.
-     *
-     * @return void
+     * Set the task's due_at date in UTC.
      */
-    protected static function boot(): void
+    public function setDueAtAttribute(?string $carbon): void
     {
-        parent::boot();
+        $this->attributes['due_at'] = null;
 
-        static::addGlobalScope(new AuthorScope);
+        if (filled($carbon)) {
+            $this->attributes['due_at'] = Carbon::parse($carbon)->setTimezone("UTC");
+        }
     }
 
     /**

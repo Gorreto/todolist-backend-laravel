@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Seed the application's database.
      */
     public function run(): void
     {
@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'darthvader@deathstar.ds'],
             [
                 'name' => 'anakin',
-                'password' => '4nak1n'
+                'password' => '4nak1n5kyw4lk3r'
             ]
         );
     }

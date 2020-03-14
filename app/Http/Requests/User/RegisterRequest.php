@@ -8,10 +8,8 @@ class RegisterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -24,7 +22,7 @@ class RegisterRequest extends FormRequest
         return [
             'name' => 'required|alpha_dash|max:255',
             'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:8|confirmed',
         ];
     }
 }

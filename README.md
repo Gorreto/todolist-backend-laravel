@@ -1,11 +1,11 @@
 # Todolist-backend Application
 
-[![Build Status](https://travis-ci.org/guillaumebriday/todolist-backend-laravel.svg?branch=master)](https://travis-ci.org/guillaumebriday/todolist-backend-laravel)
+[![pipeline status](https://gitlab.com/guillaumebriday/todolist-backend-laravel/badges/master/pipeline.svg)](https://gitlab.com/guillaumebriday/todolist-backend-laravel/pipelines)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/guillaumebriday)
 
 > Backend for https://github.com/guillaumebriday/todolist-frontend-vuejs app, built for a serie of articles on my [blog](https://guillaumebriday.fr/).
 
-The purpose of this repository is to provide API with [Laravel 5.6](http://laravel.com/) and connecting JavaScript front-end frameworks like [Vue.js](https://vuejs.org) or other clients to them.
+The purpose of this repository is to provide API with [Laravel 5.8](http://laravel.com/) and connecting JavaScript front-end frameworks like [Vue.js 2](https://vuejs.org) or other clients to them.
 
 Beside Laravel, this project uses other tools like :
 
@@ -19,7 +19,7 @@ Beside Laravel, this project uses other tools like :
 ## Installation
 
 Development environment requirements :
-- [Docker](https://www.docker.com)
+- [Docker](https://www.docker.com) >= 17.06 CE
 - [Docker Compose](https://docs.docker.com/compose/install/)
 
 Setting up your development environment on your local machine :
@@ -53,7 +53,7 @@ Password : 4nak1n
 ## Useful commands
 Running tests :
 ```
-$ docker-compose run --rm todolist-server ./vendor/bin/phpunit --stop-on-failure
+$ docker-compose run --rm todolist-server ./vendor/bin/phpunit --cache-result --order-by=defects --stop-on-defect
 ```
 
 Running php-cs-fixer :
@@ -104,6 +104,8 @@ To list all the available routes for API :
 $ docker-compose run --rm --no-deps todolist-server php artisan route:list
 ```
 
+You can import my [Insomnia](https://insomnia.rest/) workspace configured to work with the API : `.insomnia/todolist-backend-laravel.json`.
+
 ## Broadcasting & WebSockets
 
 Before using WebSockets, you need to set the ```PUSHER``` related keys in your .env file.
@@ -120,40 +122,15 @@ BROADCAST_DRIVER=pusher
 
 You can serve your application with [nginx](https://nginx.org/) in production.
 
-You can deploy this application with [Ansible](https://www.ansible.com) and [Capistrano](http://capistranorb.com/).
+You can deploy this application with [Ansible](https://www.ansible.com).
 
-Just create an ```hosts``` file like the following one :
+Copy the hosts example file and change the values to your needs :
 
-```ini
-[webservers]
-example.com
-
-[all:vars]
-ansible_python_interpreter=/usr/bin/python3
-
-[webservers:vars]
-app_url=example.com
-
-app_key=generate-me
-jwt_secret=generate-me
-
-db_database=change-me
-db_username=root
-db_password=change-me
-
-mail_driver=smtp
-mail_host=smtp.example.com
-mail_port=25
-mail_username=change-me
-mail_password=change-me
-
-pusher_app_id=a1b2c3d4
-pusher_app_key=a1b2c3d4
-pusher_app_secret=a1b2c3d4
-pusher_app_cluster=eu
+```bash
+$ cp hosts.example hosts
 ```
 
-Setup your variables in the ```playbook.yml``` and in the ```config/deploy.rb``` files.
+Setup your variables in the ```playbook.yml```.
 
 And then run :
 
@@ -161,16 +138,33 @@ And then run :
 $ ansible-playbook -i hosts playbook.yml
 ```
 
-Now with [Capistrano](http://capistranorb.com/) :
-
-Before starting, change the configuration files with your informations, then run :
-
+Build the images :
 ```bash
-$ bundle install
-$ cap production deploy
+$ docker build -f .cloud/docker/Dockerfile.prod --target application -t todolist-backend-laravel-application .
+
+$ docker build -f .cloud/docker/Dockerfile.prod --target nginx -t todolist-backend-laravel-nginx .
 ```
 
-The first deployment might fail because mysql is not fully loaded. In this case just deploy again.
+Run the containers :
+```bash
+$ docker run --rm -it --name todolist-server --link some-mysql:mysql --env-file .env --network todolist-backend todolist-backend-laravel-application
+
+$ docker run --rm -it -p 8000:8000 --network todolist-backend todolist-backend-laravel-nginx
+```
+
+## Consume the API
+
+The application is available on [https://todolist-api.guillaumebriday.xyz/api/v1/](https://todolist-api.guillaumebriday.xyz/api/v1/).
+
+The documentation is available in the `docs` folder or on [https://todolist-docs.guillaumebriday.xyz](https://todolist-docs.guillaumebriday.xyz).
+
+You can consume the API with any client.
+
+Some examples of projects who use this API:
++ [https://github.com/guillaumebriday/todolist-frontend-vuejs](https://github.com/guillaumebriday/todolist-frontend-vuejs) (Vue.js)
++ [https://github.com/benoitrongeard/todolist-angular](https://github.com/benoitrongeard/todolist-angular) (Angular 6)
+
+Don't forget to let me know if you want to add your project to this list !
 
 ## More details
 

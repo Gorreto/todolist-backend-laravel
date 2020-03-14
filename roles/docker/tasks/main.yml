@@ -3,17 +3,24 @@
   docker_image:
     name: "{{ item }}"
   with_items:
-    - mysql:latest
+    - mysql:8
     - nginx:latest
-    - php:7.2-fpm
-
-- name: Adding docker-compose.yml file
-  template:
-    src: ../templates/docker-compose.yml.j2
-    dest: "{{ app_dir }}/docker-compose.yml"
-    owner: "{{ user }}"
-    group: "{{ group }}"
+    - php:7.3-fpm-stretch
 
 - name: Create the todolist-backend network
   docker_network:
     name: todolist-backend
+
+- name: Create the mysql container
+  docker_container:
+    name: todolist-db
+    image: mysql:8
+    restart_policy: unless-stopped
+    command: "--default-authentication-plugin=mysql_native_password"
+    networks:
+      - name: todolist-backend
+    volumes:
+      - "{{ app_dir }}/storage/db:/var/lib/mysql"
+    env:
+      MYSQL_DATABASE: "{{ db_database }}"
+      MYSQL_ROOT_PASSWORD: "{{ db_password }}"

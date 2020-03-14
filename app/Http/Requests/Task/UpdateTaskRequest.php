@@ -6,10 +6,8 @@ class UpdateTaskRequest extends TaskRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -21,7 +19,6 @@ class UpdateTaskRequest extends TaskRequest
     {
         return array_merge(parent::rules(), [
             'title' => 'string|max:255',
-            'is_completed' => 'boolean',
         ]);
     }
 }

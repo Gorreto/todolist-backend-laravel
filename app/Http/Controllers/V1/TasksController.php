@@ -11,19 +11,29 @@ use App\Http\Requests\Task\TaskRequest;
 use App\Http\Requests\Task\UpdateTaskRequest;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Http\Response;
 
 class TasksController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->authorizeResource(Task::class, 'task');
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(): ResourceCollection
     {
         return TaskResource::collection(
-            Task::all()
+            auth()->user()->tasks()->get()
         );
     }
 
@@ -62,7 +72,7 @@ class TasksController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, Task $task): JsonResponse
+    public function destroy(Request $request, Task $task): Response
     {
         broadcast(new TaskDeleted($task))->toOthers();
 
@@ -74,11 +84,11 @@ class TasksController extends Controller
     /**
      * Remove the all completed tasks from storage.
      */
-    public function deleteCompletedTasks(Request $request): JsonResponse
+    public function deleteCompletedTasks(Request $request): Response
     {
         broadcast(new TasksDeleted)->toOthers();
 
-        Task::completed()->delete();
+        auth()->user()->tasks()->completed()->delete();
 
         return response()->noContent();
     }
